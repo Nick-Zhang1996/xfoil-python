@@ -31,6 +31,8 @@ lib_path = glob.glob(os.path.join(here, 'libxfoil.*'))[0]
 lib_ext = lib_path[lib_path.rfind('.'):]
 
 fptr = POINTER(c_float)
+# it seems ctypes will recycle buffer for data_as casting with same pointer
+# generating two pointer types force different buffers
 fptr2 = POINTER(c_float)
 bptr = POINTER(c_bool)
 
