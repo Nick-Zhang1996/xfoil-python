@@ -31,6 +31,7 @@ lib_path = glob.glob(os.path.join(here, 'libxfoil.*'))[0]
 lib_ext = lib_path[lib_path.rfind('.'):]
 
 fptr = POINTER(c_float)
+fptr2 = POINTER(c_float)
 bptr = POINTER(c_bool)
 
 
@@ -93,11 +94,10 @@ class XFoil(object):
     @airfoil.setter
     def airfoil(self, airfoil):
         self._airfoil = airfoil
-        self._lib.set_airfoil(
-            np.asfortranarray(airfoil.x.flatten(), dtype=c_float).ctypes.data_as(fptr),
-            np.asfortranarray(airfoil.y.flatten(), dtype=c_float).ctypes.data_as(fptr),
-            byref(c_int(airfoil.n_coords))
-        )
+        x = np.asfortranarray(airfoil.x.flatten(), dtype=c_float)
+        y = np.asfortranarray(airfoil.y.flatten(), dtype=c_float)
+        self._lib.set_airfoil(x.ctypes.data_as(fptr), y.ctypes.data_as(fptr2),byref(c_int(airfoil.n_coords)))
+
 
     @property
     def Re(self):
