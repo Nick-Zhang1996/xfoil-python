@@ -73,6 +73,31 @@ class XFoil(object):
         finally:
             os.remove(self._lib_path)
 
+    # load airfoil from dat file
+    # works only with labeled dat file (1st line name, rest coordinates)
+    # data order: LE at (0,0), TE at (1,0), start from TE to LE (upper), then back to TE(lower) counter-clockwise order
+    # other representations, as used by UIUC airfoil database, follows different convention and require additional attention
+    def load(self,filename):
+        #1st line is airfoil name
+        try:
+            f = open(filename, 'r')
+            data = f.read().splitlines()
+            f.close()
+        except IOError:
+            print("File not found")
+            return
+
+        airfoil_name = data[0]
+        datapoints = data[1:]
+        parsed = []
+
+        for line in datapoints:
+            parsed.append([float(val) for val in line.split()])
+
+        parsed = np.array(parsed)
+        self.airfoil = Airfoil(parsed[:,0],parsed[:,1])
+        return
+
     @property
     def print(self):
         """bool: True if console output should be shown."""
